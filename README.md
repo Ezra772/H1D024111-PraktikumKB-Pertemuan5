@@ -1,11 +1,5 @@
 # H1D024111-PraktikumKB-Pertemuan5
 
-## Deskripsi
-
-Program ini mensimulasikan seorang dokter spesialis THT (Telinga, Hidung, Tenggorokan) dalam mendiagnosa penyakit. User akan ditanya beberapa pertanyaan terkait gejala yang dialami, kemudian sistem akan mencocokkan jawaban dengan **knowledge base** dan menghasilkan diagnosa beserta keterangan penyakitnya.
-
----
-
 ## Program
 
 ### 1. Knowledge Base (`basis_pengetahuan`)
@@ -23,10 +17,10 @@ basis_pengetahuan = {
 Basis pengetahuan disimpan dalam **dictionary Python** dengan struktur:
 - **Key** → Nama penyakit THT (string)
 - **Value** → Dictionary berisi:
-  - `gejala`: `set` berisi kode-kode gejala yang relevan (G1–G37)
-  - `penjelasan`: Teks keterangan tentang penyakit tersebut
+  - `gejala`: `set` berisi gejala (G1–G37)
+  - `penjelasan`: keterangan tentang penyakit tersebut
 
-Program ini mencakup **23 jenis penyakit THT**:
+Program mencakup **23 jenis penyakit THT**:
 
 | No | Penyakit | Gejala |
 |----|----------|--------|
@@ -66,7 +60,7 @@ daftar_gejala = [
 ]
 ```
 
-List of tuple yang berisi pasangan `(kode_gejala, teks_pertanyaan)`. Terdapat **37 pertanyaan gejala** yang akan ditampilkan satu per satu kepada pengguna.
+List of tuple yang berisi pasangan `(kode_gejala, teks_pertanyaan)`. Terdapat **37 pertanyaan gejala** yang akan ditampilkan satu per satu kepada user.
 
 | Kode | Gejala |
 |------|--------|
@@ -128,7 +122,7 @@ def mesin_inferensi(gejala_input):
     return hasil
 ```
 
-Mesin inferensi adalah otak dari sistem pakar. Cara kerjanya:
+Cara kerja mesin inferensi:
 1. Mengubah input gejala pengguna menjadi `set`
 2. Untuk setiap penyakit, menghitung **irisan (intersection)** antara gejala input dengan gejala pada knowledge base
 3. Jika **semua gejala cocok**, tingkat kesesuaian langsung ditetapkan **100%**
@@ -139,15 +133,15 @@ Mesin inferensi adalah otak dari sistem pakar. Cara kerjanya:
 
 ### 4. Kelas GUI (`AplikasiDiagnosa`)
 
-Kelas ini menampilkan interface menggunakan **Tkinter**.
+Kelas menampilkan interface menggunakan **Tkinter**.
 
 ```python
 class AplikasiDiagnosa:
-    def __init__(self, root): ...   # Inisialisasi tampilan awal
-    def mulai_tanya(self): ...      # Reset & mulai sesi diagnosa
-    def tampilkan_pertanyaan(self): # Tampilkan pertanyaan satu per satu
-    def jawab(self, respon): ...    # Tangani jawaban YA/TIDAK
-    def proses_hasil(self): ...     # Jalankan inferensi & tampilkan hasil
+    def __init__(self, root): ...   
+    def mulai_tanya(self): ...      
+    def tampilkan_pertanyaan(self): 
+    def jawab(self, respon): ...    
+    def proses_hasil(self): ...     
 ```
 
 ---
@@ -158,12 +152,12 @@ class AplikasiDiagnosa:
 [Mulai]
    │
    ▼
-Pengguna klik "Mulai Diagnosa"
+User klik "Mulai Diagnosa"
    │
    ▼
-Pertanyaan gejala ditampilkan satu per satu (37 pertanyaan)
+Pertanyaan gejala ditampilkan satu per satu
    │
-   ├ Jawab YA  → kode gejala ditambahkan ke gejala_terpilih
+   ├ Jawab YA  → gejala ditambahkan ke gejala_terpilih
    ├ Jawab TIDAK → lanjut ke pertanyaan berikutnya
    │
    ▼
@@ -190,13 +184,13 @@ Pengguna bisa "Ulang Diagnosa"
 #### Langkah 1 - Memulai Diagnosa
 ```python
 def mulai_tanya(self):
-    self.gejala_terpilih = []   # Reset list gejala
-    self.index_pertanyaan = 0   # Reset ke pertanyaan pertama
+    self.gejala_terpilih = []   
+    self.index_pertanyaan = 0   
     self.btn_mulai.pack_forget()
     self.frame_jawaban.pack(pady=15)
-    self.tampilkan_pertanyaan()  # Mulai tampilkan pertanyaan
+    self.tampilkan_pertanyaan()  
 ```
-Saat tombol "Mulai Diagnosa" ditekan, semua state direset dan proses tanya jawab dimulai. List `gejala_terpilih` dikosongkan untuk memastikan diagnosa baru dimulai dari awal.
+Saat tombol "Mulai Diagnosa" ditekan, semua state direset dan proses tanya jawab dimulai. List `gejala_terpilih` dikosongkan untuk diagnosa baru dimulai dari awal.
 
 #### Langkah 2 - Menampilkan Pertanyaan
 ```python
@@ -208,18 +202,18 @@ def tampilkan_pertanyaan(self):
     else:
         self.proses_hasil()  # Semua pertanyaan selesai
 ```
-Setiap pertanyaan ditampilkan berurutan beserta kode gejalanya (contoh: `[G6] Apakah Anda mengalami nyeri tenggorokan?`). Label counter menunjukkan progres pertanyaan ke berapa dari total 37. Ketika `index_pertanyaan` melebihi jumlah gejala, proses inferensi dijalankan.
+Setiap pertanyaan ditampilkan berurutan (contoh: `[G6] Apakah Anda mengalami nyeri tenggorokan?`). Label counter menunjukkan progres pertanyaan ke berapa dari total 37. Ketika `index_pertanyaan` melebihi jumlah gejala, proses inferensi dijalankan.
 
-#### Langkah 3 - Menangani Jawaban
+#### Langkah 3 - Jawaban
 ```python
 def jawab(self, respon):
     if respon == 'y':
         kode = daftar_gejala[self.index_pertanyaan][0]
-        self.gejala_terpilih.append(kode)  # Hanya simpan jika YA
+        self.gejala_terpilih.append(kode)
     self.index_pertanyaan += 1
-    self.tampilkan_pertanyaan()  # Lanjut ke pertanyaan berikutnya
+    self.tampilkan_pertanyaan()  
 ```
-Jika pengguna menjawab YA, kode gejala (contoh: `G6`) disimpan ke list `gejala_terpilih`. Jika TIDAK, langsung lanjut tanpa menyimpan apapun. Index pertanyaan selalu bertambah 1 untuk memajukan ke pertanyaan berikutnya.
+Jika pengguna menjawab YA, kode gejala disimpan ke list `gejala_terpilih`. Jika TIDAK, langsung lanjut tanpa menyimpan apapun. Index pertanyaan selalu bertambah 1.
 
 #### Langkah 4 - Proses Inferensi & Tampilkan Hasil
 ```python
@@ -235,4 +229,4 @@ def proses_hasil(self):
         teks_hasil = "Tidak ditemukan penyakit THT yang cocok ..."
     messagebox.showinfo("Hasil Diagnosa", teks_hasil)
 ```
-Setelah semua 37 pertanyaan dijawab, fungsi `mesin_inferensi()` dipanggil dengan gejala yang telah dikumpulkan. Hasil diagnosa ditampilkan dalam messagebox berisi daftar penyakit yang terdeteksi beserta persentase kesesuaian dan keterangan penyakit. Jika tidak ada penyakit yang cocok, ditampilkan pesan untuk konsultasi ke dokter spesialis THT.
+Setelah semua 37 pertanyaan dijawab, fungsi `mesin_inferensi()` dipanggil. Hasil diagnosa ditampilkan dalam messagebox berisi daftar penyakit yang terdeteksi dan persentase kesesuaian serta keterangan penyakit. Jika tidak ada penyakit yang cocok, ditampilkan pesan untuk konsultasi ke dokter spesialis THT.
